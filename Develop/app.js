@@ -1,6 +1,6 @@
-const Manager = require("./lib/Manager");
-const Engineer = require("./lib/Engineer");
-const Intern = require("./lib/Intern");
+const Manager = require("./lib/Manager.js");
+const Engineer = require("./lib/Engineer.js");
+const Intern = require("./lib/Intern.js");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
@@ -11,9 +11,71 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 
+
+
+const questions = [
+    {
+        type: "input",
+        message: "Employee Name?",
+        name: "name"
+    },
+    {
+        type: "input",
+        message: "Employee Number?",
+        name: "id"
+    },
+    {
+        type: "input",
+        message: "Employee email?",
+        name: "email"
+    },
+    {
+        type: "list",
+        message: "Employee Type?",
+        choices: ['Manager', 'Intern', 'Engineer'],
+        name: "empType"
+    },
+    {
+        type: "input",
+        message: "Office Number?",
+        name: "office",
+        when: (res) => res.empType === 'Manager'
+    },
+    {
+        type: "input",
+        message: "GitHub Username?",
+        name: "github",
+        when: (res) => res.empType === 'Engineer'
+    },
+    {
+        type: "input",
+        message: "School Name?",
+        name: "schoool",
+        when: (res) => res.empType === 'Intern'
+    }
+]
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+function init() {
+    inquirer
+    .prompt(questions)
+    .then((res) => {
+        
+        if (res.empType === "Engineer") {
+            newHire = new Engineer(res.name, res.id, res.email, res.github);
+            
+        } else if (res.empType === "Manager") {
+            newHire = new Manager(res.name, res.id, res.email, res.office);
+            
+        } else {
+            newHire = new Intern(res.name, res.id, res.email, res.school);
+        }
+        console.log('hiya!')
+        render(newHire);
 
+    })
+    
+}
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
@@ -33,3 +95,4 @@ const render = require("./lib/htmlRenderer");
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+init();
