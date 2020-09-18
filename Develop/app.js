@@ -12,7 +12,7 @@ const render = require("./lib/htmlRenderer");
 
 let arr = [];
 
-
+console.log(outputPath);
 const questions = [
     {
         type: "input",
@@ -71,13 +71,14 @@ function init() {
         if (res.add) {
             init()
         } else {
-            createObjects(arr);
-        }
+           createAndRenderObjects(arr);
+        }            
     })
-    
+    .then()
 }
 
-function createObjects(users) {
+
+function createAndRenderObjects(users) {
     let emps = [];
     users.forEach(element => {
         if(element.empType === "Manager") {
@@ -90,8 +91,11 @@ function createObjects(users) {
             z = new Intern(element.name, element.id, element.email, element.school)
             emps.push(z);
         }
-    console.log(emps);
-    render(emps);
+        rendered = render(emps);
+        fs.writeFile(outputPath, rendered, (err)=>{
+            if (err) throw err;
+            console.log('rendered data has been written');
+        })
     });
 }
 
